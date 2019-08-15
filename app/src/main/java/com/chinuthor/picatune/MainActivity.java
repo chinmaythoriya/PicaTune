@@ -1,14 +1,304 @@
 package com.chinuthor.picatune;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
+
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    static int songPosition = 0;
+    RecyclerView songRecyclerView;
+    TextView songCurrentPosition, songTotalDuration;
+    SeekBar songProgress;
+    ImageButton btnPlay, btnNext, btnPrevious;
+    MediaPlayer mMediaPlayer;
+    MySongAdapter songAdapter;
+    Handler mHandler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+
+            int currentDuration = mMediaPlayer.getCurrentPosition();
+            int totalDuration = mMediaPlayer.getDuration();
+
+            songCurrentPosition.setText(milliSecondsToTimer(String.valueOf(currentDuration)));
+
+            songProgress.setProgress(getSongProgress(totalDuration, currentDuration));
+
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+    private List<Song> songs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        songTotalDuration = findViewById(R.id.songTotalDuration);
+        songCurrentPosition = findViewById(R.id.songCurrentPosition);
+        songProgress = findViewById(R.id.songProgress);
+        btnPlay = findViewById(R.id.btnPlay);
+        btnNext = findViewById(R.id.btnNext);
+        btnPrevious = findViewById(R.id.btnPrevious);
+
+        songProgress.setOnSeekBarChangeListener(this);
+
+        songRecyclerView = findViewById(R.id.songRecyclerView);
+        songRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        loadSongs();
+
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                playMySong(songs.get(songPosition));
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notifyDataChanged(songPosition, false);
+                songPosition++;
+                if (songPosition > songs.size()) {
+                    songPosition--;
+                }
+
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+                playMySong(songs.get((songPosition)));
+            }
+        });
+
+        btnPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notifyDataChanged(songPosition, false);
+                songPosition--;
+                if (songPosition < 0) {
+                    songPosition = 0;
+                }
+
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+                playMySong(songs.get((songPosition)));
+            }
+        });
+    }
+
+    private void notifyDataChanged(int position, boolean playing) {
+        Song song = songs.get(position);
+        song.setPlaying(playing);
+        songs.set(position, song);
+        songAdapter.notifyDataSetChanged();
+    }
+
+    private void loadSongs() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+           /* if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else*/
+            {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            fetchAllSongs();
+        }
+    }
+
+    private void fetchAllSongs() {
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+
+        String[] projection = {
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.DURATION
+        };
+
+        Cursor cursor = this.managedQuery(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null);
+
+
+        while (cursor.moveToNext()) {
+            songs.add(cursorToSong(cursor));
+        }
+
+        songAdapter = new MySongAdapter(MainActivity.this, songs);
+        songRecyclerView.setAdapter(songAdapter);
+    }
+
+    private Song cursorToSong(Cursor cursor) {
+        Song song = new Song();
+        song.setId(cursor.getString(0));
+        song.setArtist(cursor.getString(1));
+        song.setTitle(cursor.getString(2));
+        song.setData(cursor.getString(3));
+        song.setDisplayName(cursor.getString(4));
+        song.setDuration(cursor.getString(5));
+        song.setPlaying(false);
+        return song;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    fetchAllSongs();
+                    // permission was granted, yay! Do the
+                    // songs-related task you need to do.
+
+                } else {
+                    Toast.makeText(MainActivity.this, "Sorry We Can't Show Songs!!!", Toast.LENGTH_SHORT).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+
+        }
+    }
+
+    public void playRandomSong(int position) {
+        notifyDataChanged(songPosition, false);
+        songPosition = position;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+        playMySong(songs.get(songPosition));
+    }
+
+    private void playMySong(Song song) {
+        /*if(currentSongId!=null && song.getId()!=currentSongId)
+        {
+            mMediaPlayer.release();
+            mMediaPlayer=null;
+        }*/
+        notifyDataChanged(songPosition, true);
+        if (mMediaPlayer == null) {
+            // currentSongId=song.getId();
+            mMediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(song.getData()));
+            mMediaPlayer.start();
+            btnPlay.setImageResource(android.R.drawable.ic_media_pause);
+            songTotalDuration.setText(milliSecondsToTimer(song.getDuration()));
+            updateSongProgress();
+
+        } else {
+            if (mMediaPlayer.isPlaying()) {
+                notifyDataChanged(songPosition, false);
+                mMediaPlayer.pause();
+                btnPlay.setImageResource(android.R.drawable.ic_media_play);
+            } else {
+                notifyDataChanged(songPosition, true);
+                mMediaPlayer.start();
+                btnPlay.setImageResource(android.R.drawable.ic_media_pause);
+            }
+        }
+    }
+
+    private void updateSongProgress() {
+        mHandler.postDelayed(runnable, 1000);
+    }
+
+    private int getSongProgress(int totalDuration, int currentDuration) {
+        return (currentDuration * 100) / totalDuration;
+    }
+
+    private String milliSecondsToTimer(String songDuration) {
+        int duration = Integer.parseInt(songDuration);
+        int hour = (duration / (1000 * 60 * 60));
+        int minute = ((duration % (1000 * 60 * 60)) / (1000 * 60));
+        int seconds = (((duration % (1000 * 60 * 60)) % (1000 * 60)) / (1000));
+        String finalString = "";
+        if (hour < 10)
+            finalString += "0";
+        finalString += hour + ":";
+        if (minute < 10)
+            finalString += "0";
+        finalString += minute + ":";
+        if (seconds < 10)
+            finalString += "0";
+        finalString += seconds;
+
+        return finalString;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        if (b) {
+            mMediaPlayer.seekTo(getTimeFromProgress(seekBar.getProgress(), mMediaPlayer.getDuration()));
+        }
+    }
+
+    private int getTimeFromProgress(int progress, int duration) {
+        int songDuration = ((duration * progress) / 100);
+        return songDuration;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

@@ -35,7 +35,7 @@
                 android:src="@android:drawable/ic_media_previous" />
 
             <ImageButton
-                android:id="@+id/btnPlay"
+                android:id="@+id/song_list_item_add_to_playlist_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"

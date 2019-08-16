@@ -6,26 +6,24 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
-public class Main2Activity extends AppCompatActivity
+public class Main2Activity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FloatingActionButton mainAddSongFab;
     private DrawerLayout mainDrawerLayout;
     private NavigationView mainDrawerNavigationView;
     private AppCompatTextView mainDrawerHeaderNameTextView;
     private AppCompatTextView mainDrwerHeaderUsernameTextView;
     private FragmentManager fragmentManager;
+    private User user;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +32,10 @@ public class Main2Activity extends AppCompatActivity
         Toolbar mainToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
-
-        mainAddSongFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        DatabaseHelper helper = new DatabaseHelper(this);
+        user = helper.getUser(sessionManager.getUserDetail(SessionManager.KEY_USERNAME, ""));
+        bundle = new Bundle();
+        bundle.putParcelable("user", user);
 
         mainDrawerLayout = findViewById(R.id.drawer_layout);
         mainDrawerNavigationView = findViewById(R.id.main_drawer_navigation_view);
@@ -59,7 +53,9 @@ public class Main2Activity extends AppCompatActivity
         mainDrawerNavigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(new LibraryFragment(), "Library").commit();
+        LibraryFragment libraryFragment = new LibraryFragment();
+        libraryFragment.setArguments(bundle);
+        fragmentManager.beginTransaction().add(R.id.main_fragment_container, libraryFragment, "Library").commit();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -70,11 +66,15 @@ public class Main2Activity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_library:
-                fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new LibraryFragment(), "Library").commit();
+                LibraryFragment libraryFragment = new LibraryFragment();
+                libraryFragment.setArguments(bundle);
+                fragmentManager.beginTransaction().replace(R.id.main_fragment_container, libraryFragment, "Library").commit();
                 break;
 
             case R.id.nav_play_list:
-                fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new PlayListFragment(), "PlayList").commit();
+                PlayListFragment playListFragment = new PlayListFragment();
+                playListFragment.setArguments(bundle);
+                fragmentManager.beginTransaction().replace(R.id.main_fragment_container, playListFragment, "PlayList").commit();
                 break;
 
             case R.id.nav_rating:
@@ -104,4 +104,16 @@ public class Main2Activity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+    public void playRandomSong(int position) {
+//        notifyDataChanged(songPosition, false);
+//        songPosition = position;
+//        if (mMediaPlayer != null) {
+//            mMediaPlayer.release();
+//            mMediaPlayer = null;
+//        }
+//        playMySong(songs.get(songPosition));
+    }
+
+
 }

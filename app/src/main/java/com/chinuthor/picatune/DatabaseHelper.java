@@ -83,6 +83,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user.setAppRating(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING)));
         }
 
+        user = getUserSongs(user);
+
         cursor.close();
         db.close();
         return user;
@@ -267,10 +269,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_ON_PLAYLIST, false);
         db.insert(DatabaseUtil.USER_SONGS_TABLE_NAME, null, contentValues);
 
-        Song newSong = new Song();
-        newSong.setId(songId);
-        newSong.setOnPlayList(false);
-        user.getSongList().add(newSong);
+//        Song newSong = new Song();
+//        newSong.setId(songId);
+//        newSong.setOnPlayList(false);
+//        user.getSongList().add(newSong);
 
         db.close();
         return user;

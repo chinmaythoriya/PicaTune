@@ -1,8 +1,11 @@
 package com.chinuthor.picatune;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class User {
+public class User implements Parcelable {
     private int Id;
     private String firstName;
     private String lastName;
@@ -19,6 +22,37 @@ public class User {
     public User() {
         this.songList = new ArrayList<>();
         this.playlist = new Playlist();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    public User(String firstName, String lastName, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+    }
+
+    protected User(Parcel in) {
+        Id = in.readInt();
+        firstName = in.readString();
+        lastName = in.readString();
+        username = in.readString();
+        password = in.readString();
+        isAdmin = in.readByte() != 0;
+        ratingPrompted = in.readByte() != 0;
+        loginCount = in.readInt();
+        appRating = in.readInt();
     }
 
     public Playlist getPlaylist() {
@@ -122,5 +156,23 @@ public class User {
 
     public void setAppRating(int appRating) {
         this.appRating = appRating;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(Id);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(username);
+        dest.writeString(password);
+        dest.writeByte((byte) (isAdmin ? 1 : 0));
+        dest.writeByte((byte) (ratingPrompted ? 1 : 0));
+        dest.writeInt(loginCount);
+        dest.writeInt(appRating);
     }
 }

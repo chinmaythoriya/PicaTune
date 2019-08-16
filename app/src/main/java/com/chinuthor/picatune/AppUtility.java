@@ -383,4 +383,27 @@ public class AppUtility {
         return !TextUtils.isEmpty(password) && password.length() >= 6 && password.length() <= 15;
     }
 
+    public static String milliSecondsToTimer(String songDuration) {
+        int duration = Integer.parseInt(songDuration);
+        int hour = (duration / (1000 * 60 * 60));
+        int minute = ((duration % (1000 * 60 * 60)) / (1000 * 60));
+        int seconds = (((duration % (1000 * 60 * 60)) % (1000 * 60)) / (1000));
+        String finalString = "";
+        if (hour < 10)
+            finalString += "0";
+        finalString += hour + ":";
+        if (minute < 10)
+            finalString += "0";
+        finalString += minute + ":";
+        if (seconds < 10)
+            finalString += "0";
+        finalString += seconds;
+
+        return finalString;
+    }
+
+    public static int getSongProgress(int totalDuration, int currentDuration) {
+        return (currentDuration * 100) / totalDuration;
+    }
+
 }

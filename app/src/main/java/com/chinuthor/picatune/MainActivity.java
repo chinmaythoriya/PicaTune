@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     SeekBar songProgress;
     ImageButton btnPlay, btnNext, btnPrevious;
     MediaPlayer mMediaPlayer;
-    MySongAdapter songAdapter;
+    LibrarySongListAdapter songAdapter;
     Handler mHandler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         songTotalDuration = findViewById(R.id.songTotalDuration);
         songCurrentPosition = findViewById(R.id.songCurrentPosition);
         songProgress = findViewById(R.id.songProgress);
-        btnPlay = findViewById(R.id.btnPlay);
+        btnPlay = findViewById(R.id.song_list_item_add_to_playlist_button);
         btnNext = findViewById(R.id.btnNext);
         btnPrevious = findViewById(R.id.btnPrevious);
 
@@ -176,13 +176,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             songs.add(cursorToSong(cursor));
         }
 
-        songAdapter = new MySongAdapter(MainActivity.this, songs);
+        songAdapter = new LibrarySongListAdapter(MainActivity.this, songs);
         songRecyclerView.setAdapter(songAdapter);
     }
 
     private Song cursorToSong(Cursor cursor) {
         Song song = new Song();
-        song.setId(cursor.getString(0));
+//        song.setId(cursor.getString(0));
         song.setArtist(cursor.getString(1));
         song.setTitle(cursor.getString(2));
         song.setData(cursor.getString(3));

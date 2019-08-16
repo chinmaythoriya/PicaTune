@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_library"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="@string/menu_library" />
+        <item
+            android:id="@+id/nav_play_list"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="@string/menu_play_list" />
+        <item
+            android:id="@+id/nav_rating"
+            android:icon="@android:drawable/star_on"
+            android:title="@string/menu_rating" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="@string/menu_logout" />
+    </group>
+
+</menu>

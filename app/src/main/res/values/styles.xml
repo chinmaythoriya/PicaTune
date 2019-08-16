@@ -1,11 +1,220 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--<style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">-->
+    <!--<item name="android:windowBackground">@drawable/background_splash</item>-->
+    <!--</style>-->
+
+    <!--<style name="ActivityTheme" parent="AppTheme">-->
+    <!--<item name="android:background">@color/colorBackground</item>-->
+
+    <!--</style>-->
+
+    <!--<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
+
+    <!--<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">-->
+    <!--<item name="android:textColor">@color/colorPrimaryDark</item>-->
+    <!--</style>-->
+
+    <!--<style name="searchSuggestionTheme" parent="TextAppearance.AppCompat.Light.SearchResult.Subtitle">-->
+    <!--<item name="android:background">@android:color/white</item>-->
+    <!--<item name="android:textColor">@android:color/black</item>-->
+    <!--</style>-->
+
+    <!--<style name="DateTimePickerTheme" parent="Theme.AppCompat.Light.Dialog">-->
+    <!--<item name="colorAccent">@color/colorBlack</item>-->
+    <!--</style>-->
+
+    <!--<style name="NavigationDrawerStyle">-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--<item name="android:typeface">monospace</item>-->
+    <!--<item name="android:titleMarginStart">0dp</item>-->
+    <!--</style>-->
+
+    <!--<style name="SpinnerItemStyle" parent="Base.Widget.AppCompat.TextView.SpinnerItem">-->
+    <!--<item name="android:spinnerItemStyle">@layout/spinner_item</item>-->
+    <!--</style>-->
+
+    <!--<style name="spinnerDropDownStyle" parent="Base.Widget.AppCompat.DropDownItem.Spinner">-->
+
+    <!--</style>-->
+
+    <!--<style name="SpinnerStyle" parent="Base.Widget.AppCompat.Spinner">-->
+    <!--<item name="android:spinnerItemStyle">@style/SpinnerItemStyle</item>-->
+    <!--<item name="android:padding">@dimen/padding_8dp</item>-->
+    <!--<item name="android:background">@drawable/spinner_drop_down_shape</item>-->
+    <!--</style>-->
+
+    <!--<style name="DialogStyle">-->
+    <!--<item name="android:typeface">monospace</item>-->
+    <!--</style>-->
+
+    <!--<style name="toolbarStyle">-->
+    <!--<item name="android:textSize">@dimen/fontsize_19</item>-->
+    <!--<item name="android:typeface">serif</item>-->
+    <!--</style>-->
+
+    <!--<style name="profileTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+    <!--<item name="android:textColor">#59504E</item>-->
+    <!--<item name="android:typeface">monospace</item>-->
+    <!--</style>-->
+
+    <!--<style name="tabLayoutStyle" parent="@android:style/TextAppearance.Widget.TabWidget">-->
+    <!--<item name="android:typeface">monospace</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--</style>-->
+
+    <!--<style name="LoginEdittext" parent="Base.V7.Widget.AppCompat.EditText">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_margin">5dp</item>-->
+    <!--<item name="android:background">@drawable/edittext_style</item>-->
+    <!--<item name="android:padding">8dp</item>-->
+    <!--<item name="android:minHeight">@dimen/login_edittext_height</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--<item name="android:layout_marginStart">@dimen/login_header_top_margin</item>-->
+    <!--<item name="android:layout_marginEnd">@dimen/login_header_top_margin</item>-->
+    <!--</style>-->
+
+    <!--<style name="LoginButton" parent="Base.Widget.AppCompat.Button.Borderless">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:minHeight">@dimen/login_button_height</item>-->
+    <!--<item name="android:layout_gravity">center_horizontal</item>-->
+    <!--<item name="android:background">@drawable/button_style</item>-->
+    <!--<item name="android:paddingStart">@dimen/padding_5dp</item>-->
+    <!--<item name="android:layout_marginStart">30dp</item>-->
+    <!--<item name="android:layout_marginEnd">30dp</item>-->
+    <!--<item name="android:paddingEnd">@dimen/padding_5dp</item>-->
+    <!--<item name="android:textColor">@color/colorWhite</item>-->
+    <!--<item name="android:textAllCaps">false</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--</style>-->
+
+    <!--<style name="ProfileTextView" parent="Base.TextAppearance.AppCompat.Medium">-->
+    <!--<item name="android:layout_marginStart">10dp</item>-->
+    <!--<item name="android:layout_marginEnd">10dp</item>-->
+    <!--<item name="android:layout_width">wrap_content</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_15</item>-->
+    <!--</style>-->
+
+    <!--<style name="CommonEdittext" parent="Base.V7.Widget.AppCompat.EditText">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_marginStart">8dp</item>-->
+    <!--<item name="android:layout_marginEnd">8dp</item>-->
+    <!--<item name="android:layout_marginTop">3dp</item>-->
+    <!--<item name="android:layout_marginBottom">3dp</item>-->
+    <!--<item name="android:background">@drawable/edittext_style</item>-->
+    <!--<item name="android:padding">10dp</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--</style>-->
+
+    <!--<style name="NewsFeedPreferencesButton" parent="Base.TextAppearance.AppCompat.Button">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_margin">10dp</item>-->
+    <!--<item name="android:textAllCaps">false</item>-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--<item name="android:colorBackground">@color/colorWhite</item>-->
+    <!--<item name="android:textColor">@color/colorBlack</item>-->
+    <!--<item name="android:background">@drawable/button_style</item>-->
+    <!--</style>-->
+
+    <!--<style name="ProfileButtons" parent="Base.Widget.AppCompat.Button.Small">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">wrap_content</item>-->
+    <!--<item name="android:layout_marginStart">@dimen/margin_5dp</item>-->
+    <!--<item name="android:layout_marginEnd">@dimen/margin_10dp</item>-->
+    <!--<item name="android:layout_marginBottom">@dimen/margin_5dp</item>-->
+    <!--<item name="android:background">@android:color/transparent</item>-->
+    <!--</style>-->
+
+    <!--<style name="profileThemeDialog" parent="android:Theme.Material.Light.Dialog">-->
+    <!--<item name="android:windowMinWidthMajor">90%</item>-->
+    <!--<item name="android:windowMinWidthMinor">90%</item>-->
+    <!--</style>-->
+
+    <!--<style name="spinnerList" parent="Base.Widget.AppCompat.Spinner">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_marginStart">@dimen/margin_8dp</item>-->
+    <!--<item name="android:layout_marginEnd">@dimen/margin_8dp</item>-->
+    <!--<item name="android:layout_marginBottom">@dimen/margin_5dp</item>-->
+    <!--<item name="android:layout_marginTop">@dimen/margin_5dp</item>-->
+    <!--<item name="android:background">@drawable/edittext_style</item>-->
+    <!--<item name="android:padding">@dimen/padding_8dp</item>-->
+    <!--</style>-->
+
+    <!--<style name="uploadTextview">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_marginStart">@dimen/margin_10dp</item>-->
+    <!--<item name="android:layout_marginEnd">@dimen/margin_10dp</item>-->
+    <!--<item name="android:layout_marginBottom">@dimen/margin_5dp</item>-->
+    <!--<item name="android:layout_marginTop">@dimen/margin_5dp</item>-->
+    <!--<item name="android:background">@drawable/edittext_style</item>-->
+    <!--<item name="android:padding">@dimen/padding_8dp</item>-->
+    <!--</style>-->
+
+    <!--<style name="MyButton" parent="Base.Widget.AppCompat.Button.Borderless">-->
+    <!--<item name="android:textSize">@dimen/fontsize_14</item>-->
+    <!--<item name="android:background">@drawable/button_style</item>-->
+    <!--<item name="android:textColor">@color/colorWhite</item>-->
+    <!--<item name="android:textAllCaps">false</item>-->
+    <!--</style>-->
+
+    <!--<style name="HomeTakeShareButton" parent="Base.Widget.AppCompat.Button.Borderless">-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_marginStart">40dp</item>-->
+    <!--<item name="android:layout_marginEnd">40dp</item>-->
+    <!--<item name="android:layout_marginTop">10dp</item>-->
+    <!--<item name="android:layout_gravity">center_horizontal</item>-->
+    <!--<item name="android:background">@drawable/home_takeshare_button_style</item>-->
+    <!--<item name="android:textColor">@color/colorWhite</item>-->
+    <!--<item name="android:textAllCaps">false</item>-->
+    <!--</style>-->
+
+    <!--<style name="ProfileButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">-->
+    <!--<item name="android:background">@drawable/profile_button_style</item>-->
+    <!--<item name="android:textColor">#59504E</item>-->
+    <!--<item name="android:textAllCaps">false</item>-->
+    <!--<item name="android:layout_weight">1</item>-->
+    <!--<item name="android:minHeight">30dp</item>-->
+    <!--<item name="android:layout_width">wrap_content</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--</style>-->
+
+    <!--<style name="seatSwitchStyle" parent="Base.Widget.AppCompat.CompoundButton.Switch">-->
+    <!--<item name="android:background">@drawable/radio_button_selector</item>-->
+    <!--<item name="android:textColor">@drawable/radio_button_textcolor</item>-->
+    <!--<item name="android:button">@null</item>-->
+    <!--<item name="android:layout_marginTop">@dimen/margin_3dp</item>-->
+    <!--<item name="android:layout_marginBottom">@dimen/margin_3dp</item>-->
+    <!--<item name="android:layout_marginStart">@dimen/margin_1dp</item>-->
+    <!--<item name="android:layout_marginEnd">@dimen/margin_1dp</item>-->
+    <!--<item name="android:padding">@dimen/padding_5dp</item>-->
+    <!--<item name="android:gravity">center</item>-->
+    <!--<item name="android:layout_gravity">center</item>-->
+    <!--&lt;!&ndash;<item name="android:visibility">gone</item>&ndash;&gt;-->
+    <!--</style>-->
 
 </resources>

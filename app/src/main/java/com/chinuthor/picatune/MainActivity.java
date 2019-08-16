@@ -288,8 +288,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     private int getTimeFromProgress(int progress, int duration) {
-        int songDuration = ((duration * progress) / 100);
-        return songDuration;
+        return ((duration * progress) / 100);
     }
 
     @Override

@@ -122,9 +122,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public User addUser(User newUser) {
-        User user = null;
 
-        if (getUser(Objects.requireNonNull(user).getUsername()) != null) {
+        if (getUser(Objects.requireNonNull(newUser).getUsername()) != null) {
             return null;
         } else {
             //INITIALIZE DATABASE OBJECT AS WRITABLE
@@ -145,14 +144,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             if (idNo > 0) {
                 //ASSIGN USER OBJECT ID NUMBER
-                user = getUser(user.getUsername());
+                newUser = getUser(newUser.getUsername());
 
-                if (user != null)
-                    user = addUserPlaylist(user);
+                if (newUser != null)
+                    newUser = addUserPlaylist(newUser);
 
                 db.close();
                 //RETURN USER
-                return user;
+                return newUser;
             } else {
                 db.close();
                 return null;//RETURN NULL - NO USER FOUND

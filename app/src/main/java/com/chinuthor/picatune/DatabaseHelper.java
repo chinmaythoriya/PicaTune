@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -51,20 +52,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user.setAdmin(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_IS_ADMIN)) > 0);
             user.setRatingPrompted(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED)) > 0);
             user.setAppRating(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING)));
+            user = updateUserLoginCount(user);
         }
+
+        cursor.close();
+        db.close();
         return user;
     }
 
-    public User getUser(int id) {
+    public User getUser(String username) {
         User user = null;
         //INITIALIZE DATABASE OBJECT AS READABLE
         SQLiteDatabase db = getReadableDatabase();
         //CREATE DATA BASE SQL QUERY
-        String getUser = "SELECT * FROM " + DatabaseUtil.USERS_TABLE_NAME + " WHERE " + DatabaseUtil.USERS_COLUMN_ID + "=?";
+        String getUser = "SELECT * FROM " + DatabaseUtil.USERS_TABLE_NAME + " WHERE " + DatabaseUtil.USERS_COLUMN_USERNAME + "=?";
         //DECLARE CURSOR FOR DATABASE RETREIVAL
         Cursor cursor = null;
         //EXECUTE DATABASE QUERY
-        cursor = db.rawQuery(getUser, new String[]{String.valueOf(id)});
+        cursor = db.rawQuery(getUser, new String[]{username});
 
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();
@@ -77,6 +82,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user.setRatingPrompted(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED)) > 0);
             user.setAppRating(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING)));
         }
+
+        cursor.close();
+        db.close();
         return user;
     }
 
@@ -107,51 +115,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 userList.add(new User(id, firstName, lastName, username, isAdmin, ratingPrompted, loginCount, appRating));
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
+        db.close();
         return userList;
     }
 
     public User addUser(User newUser) {
         User user = null;
-        //INITIALIZE DATABASE OBJECT AS WRITABLE
-        SQLiteDatabase db = getWritableDatabase();
 
-        //DECLARE AND INITIALIZE CONTENT VALUES; PREPARATIONS FOR INSERTION
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseUtil.USERS_COLUMN_FIRST_NAME, newUser.getFirstName());
-        contentValues.put(DatabaseUtil.USERS_COLUMN_LAST_NAME, newUser.getLastName());
-        contentValues.put(DatabaseUtil.USERS_COLUMN_USERNAME, newUser.getUsername());
-        contentValues.put(DatabaseUtil.USERS_COLUMN_PASSWORD, newUser.getPassword());
-        contentValues.put(DatabaseUtil.USERS_COLUMN_IS_ADMIN, false);
-        contentValues.put(DatabaseUtil.USERS_COLUMN_LOGIN_COUNT, 1);
-        contentValues.put(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED, false);
-        contentValues.put(DatabaseUtil.USERS_COLUMN_APP_RATING, 9);
+        if (getUser(Objects.requireNonNull(user).getUsername()) != null) {
+            return null;
+        } else {
+            //INITIALIZE DATABASE OBJECT AS WRITABLE
+            SQLiteDatabase db = getWritableDatabase();
 
-        long idNo = db.insert(DatabaseUtil.USERS_TABLE_NAME, null, contentValues);
+            //DECLARE AND INITIALIZE CONTENT VALUES; PREPARATIONS FOR INSERTION
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DatabaseUtil.USERS_COLUMN_FIRST_NAME, newUser.getFirstName());
+            contentValues.put(DatabaseUtil.USERS_COLUMN_LAST_NAME, newUser.getLastName());
+            contentValues.put(DatabaseUtil.USERS_COLUMN_USERNAME, newUser.getUsername());
+            contentValues.put(DatabaseUtil.USERS_COLUMN_PASSWORD, newUser.getPassword());
+            contentValues.put(DatabaseUtil.USERS_COLUMN_IS_ADMIN, false);
+            contentValues.put(DatabaseUtil.USERS_COLUMN_LOGIN_COUNT, 1);
+            contentValues.put(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED, false);
+            contentValues.put(DatabaseUtil.USERS_COLUMN_APP_RATING, 0);
 
-        if (idNo > 0) {
-            //ASSIGN USER OBJECT ID NUMBER
-            user = getUser(Integer.valueOf(String.valueOf(idNo)));
-            user = addUserPlaylist(user);
-            //RETURN USER
-            return user;
-        } else
-            return null;//RETURN NULL - NO USER FOUND
-    }
+            long idNo = db.insert(DatabaseUtil.USERS_TABLE_NAME, null, contentValues);
 
-    private User addUserPlaylist(User user) {
-        SQLiteDatabase db = getWritableDatabase();
-        user.getPlaylist().setPlaylistName("My Playlist");
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_PLAYLIST_NAME, user.getPlaylist().getPlaylistName());
-        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_SONG_COUNT, 0);
-        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_USER_ID, user.getId());
-        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_DURATION, 0);
-        long insertId = db.insert(DatabaseUtil.PLAYLIST_TABLE_NAME, null, contentValues);
-        if (insertId > 0) {
-            user.getPlaylist().setId(Integer.valueOf(String.valueOf(insertId)));
-            return user;
-        } else
-            return user;
+            if (idNo > 0) {
+                //ASSIGN USER OBJECT ID NUMBER
+                user = getUser(user.getUsername());
+
+                if (user != null)
+                    user = addUserPlaylist(user);
+
+                db.close();
+                //RETURN USER
+                return user;
+            } else {
+                db.close();
+                return null;//RETURN NULL - NO USER FOUND
+            }
+        }
     }
 
     public User getUserSongs(User user) {
@@ -180,8 +186,151 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 user.getSongList().add(song);
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
+        db.close();
         return user;
     }
+
+    public User submitAppRating(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USERS_COLUMN_APP_RATING, user.getAppRating());
+        if (user.getAppRating() > 0) {
+            contentValues.put(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED, true);
+        }
+        db.update(DatabaseUtil.USERS_TABLE_NAME, contentValues, DatabaseUtil.USERS_COLUMN_ID + "=?", new String[]{String.valueOf(user.getId())});
+
+        db.close();
+        return user;
+    }
+
+    public User addToPlaylist(User user, int songId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_ON_PLAYLIST, true);
+
+        //RETURN (BOOLEAN) IF RECORDS WAS UPDATED
+        if (db.update(DatabaseUtil.USER_SONGS_TABLE_NAME, contentValues, DatabaseUtil.USER_SONGS_COLUMN_ID + "=?", new String[]{String.valueOf(songId)}) > 0) {
+            for (Song song : user.getSongList()) {
+                if (song.getId() == songId) {
+                    song.setOnPlayList(true);
+                    break;
+                }
+            }
+        }
+        user = upDatePlaylistCount(user);
+
+        db.close();
+        return user;
+    }
+
+    public User updatePlaylistName(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_PLAYLIST_NAME, user.getPlaylist().getPlaylistName());
+        db.update(DatabaseUtil.PLAYLIST_TABLE_NAME, contentValues, DatabaseUtil.PLAYLIST_COLUMN_ID + "=?", new String[]{String.valueOf(user.getPlaylist().getId())});
+
+        db.close();
+        return user;
+    }
+
+    public User removeFromPlaylist(User user, int songId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_ON_PLAYLIST, false);
+
+        //RETURN (BOOLEAN) IF RECORDS WAS UPDATED
+        if (db.update(DatabaseUtil.USER_SONGS_TABLE_NAME, contentValues, DatabaseUtil.USER_SONGS_COLUMN_ID + "=?", new String[]{String.valueOf(songId)}) > 0) {
+            for (Song song : user.getSongList()) {
+                if (song.getId() == songId) {
+                    song.setOnPlayList(false);
+                    break;
+                }
+            }
+        }
+        user = upDatePlaylistCount(user);
+        db.close();
+        return user;
+    }
+
+    public User addSongToLibrary(User user, int songId) {
+        //INITIALIZE DATABASE OBJECT AS WRITABLE
+        SQLiteDatabase db = getWritableDatabase();
+
+        //DECLARE AND INITIALIZE CONTENT VALUES; PREPARATIONS FOR INSERTION
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_USER_ID, user.getId());
+        contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_ID, songId);
+        contentValues.put(DatabaseUtil.USER_SONGS_COLUMN_ON_PLAYLIST, false);
+        db.insert(DatabaseUtil.USER_SONGS_TABLE_NAME, null, contentValues);
+
+        Song newSong = new Song();
+        newSong.setId(songId);
+        newSong.setOnPlayList(false);
+        user.getSongList().add(newSong);
+
+        db.close();
+        return user;
+    }
+
+    private User upDatePlaylistCount(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        //RECALUCULATE NUMBER OF TRACK ON PLAYLIST
+        int onListCounter = 0;
+        user.getPlaylist().setSongCount(0);
+        for (Song song : user.getSongList()) {
+            if (song.isOnPlayList()) {
+                onListCounter++;
+            }
+        }
+        //SET RECALCULATED NUMBER OF TACKS ON PLAYLIST
+        user.getPlaylist().setSongCount(onListCounter);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_SONG_COUNT, user.getPlaylist().getSongCount());
+        db.update(DatabaseUtil.PLAYLIST_TABLE_NAME, contentValues, DatabaseUtil.PLAYLIST_COLUMN_ID + "=?", new String[]{String.valueOf(user.getPlaylist().getId())});
+
+        db.close();
+        return user;
+    }
+
+    private User addUserPlaylist(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        user.getPlaylist().setPlaylistName("My Playlist");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_PLAYLIST_NAME, user.getPlaylist().getPlaylistName());
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_SONG_COUNT, 0);
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_USER_ID, user.getId());
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_DURATION, 0);
+        long insertId = db.insert(DatabaseUtil.PLAYLIST_TABLE_NAME, null, contentValues);
+        if (insertId > 0) {
+            user.getPlaylist().setId(Integer.valueOf(String.valueOf(insertId)));
+        }
+        db.close();
+        return user;
+    }
+
+    private User updateUserLoginCount(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USERS_COLUMN_LOGIN_COUNT, user.getLoginCount() + 1);
+        db.update(DatabaseUtil.USERS_TABLE_NAME, contentValues, DatabaseUtil.USERS_COLUMN_ID + "=?", new String[]{String.valueOf(user.getId())});
+
+        db.close();
+        return user;
+    }
+
+
+
+
+
+
+
 
     /*//DBHELPER - ADD A STUDENT IN THE DB TABLE
     public Student addStudent(Student student){

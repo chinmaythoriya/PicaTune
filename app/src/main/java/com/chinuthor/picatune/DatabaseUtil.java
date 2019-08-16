@@ -63,7 +63,6 @@ public class DatabaseUtil {
             "   " + PLAYLIST_COLUMN_USER_ID + "INTEGER NOT NULL, \n" +
             "   " + PLAYLIST_COLUMN_PLAYLIST_NAME + " varchar(200) NOT NULL, \n" +
             "   " + PLAYLIST_COLUMN_SONG_COUNT + " INTEGER NOT NULL, \n" +
-            "   " + PLAYLIST_COLUMN_DURATION + " DOUBLE, \n" +
             ");";
 
 

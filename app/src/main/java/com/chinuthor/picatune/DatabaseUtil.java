@@ -71,11 +71,13 @@ public class DatabaseUtil {
     public static final String USER_SONGS_TABLE_NAME = "UsersSongs";
     public static final String USER_SONGS_COLUMN_ID = "id";
     public static final String USER_SONGS_COLUMN_USER_ID = "userId";
+    public static final String USER_SONGS_COLUMN_ON_PLAYLIST = "onPlaylist";
 
     //DATABSE QUERY TO CREATE DATABASE TABLE IF REQUIRED
     public static final String SQL_CREATE_USER_SONGS_TABLE = "CREATE TABLE IF NOT EXISTS " + USER_SONGS_TABLE_NAME + " (\n" +
             "   " + USER_SONGS_COLUMN_ID + " INTEGER NOT NULL CONSTRAINT usersongs_pk PRIMARY KEY AUTOINCREMENT,\n" +
             "   " + USER_SONGS_COLUMN_USER_ID + " INTEGER NOT NULL, \n" +
+            "   " + USER_SONGS_COLUMN_ON_PLAYLIST + " BOOLEAN NOT NULL, \n" +
             ");";
 
 

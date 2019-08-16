@@ -7,12 +7,30 @@ public class User {
     private String firstName;
     private String lastName;
     private String username;
+    private String password;
     private boolean isAdmin;
     private boolean ratingPrompted;
     private int loginCount;
     private int appRating;
     private Playlist playlist;
     private ArrayList<Song> songList;
+
+
+    public User() {
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    public ArrayList<Song> getSongList() {
+        return songList;
+    }
+
 
 
     public User(int id, String firstName, String lastName, String username, boolean isAdmin, boolean ratingPrompted, int loginCount, int appRating) {
@@ -25,6 +43,18 @@ public class User {
         this.loginCount = loginCount;
         this.appRating = appRating;
         this.songList = new ArrayList<>();
+    }
+
+    public void setSongList(ArrayList<Song> songList) {
+        this.songList = songList;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getId() {

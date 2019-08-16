@@ -1,8 +1,12 @@
 package com.chinuthor.picatune;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -25,66 +29,159 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    /*//DBHELPER - FETCH A STUDENT IN THE DB TABLE
-    public User LOGIN_USER(String username, String password){
-
+    //DBHELPER - FETCH A STUDENT IN THE DB TABLE
+    public User login(String username, String password) {
+        User user = null;
         //INITIALIZE DATABASE OBJECT AS READABLE
         SQLiteDatabase db = getReadableDatabase();
-
-        //PREPARE QUERY FOR FETCHING SINGLE STUDENT
-        String getOne = "SELECT * FROM "+DatabaseUtil.USERS_TABLE_NAME+" WHERE "+DatabaseUtil.USERS_COLUMN_USERNAME+"=?";
-
-        //PREPARE QUERY FOR FETCHING MULTIPLE STUDENT
-        String getAll = "SELECT * FROM "+TABLE_NAME;
-
-        //DECLARE CURSOR / STUDENT
+        //CREATE DATA BASE SQL QUERY
+        String getUser = "SELECT * FROM " + DatabaseUtil.USERS_TABLE_NAME + " WHERE " + DatabaseUtil.USERS_COLUMN_USERNAME + "=?" + " AND " + DatabaseUtil.USERS_COLUMN_PASSWORD + "=?";
+        //DECLARE CURSOR FOR DATABASE RETREIVAL
         Cursor cursor = null;
-        Student student = null;
-        //DECLARE ARRAY LIST OF STUDENTS
-        ArrayList<Student> studentList = null;
+        //EXECUTE DATABASE QUERY
+        cursor = db.rawQuery(getUser, new String[]{String.valueOf(username), String.valueOf(password)});
 
-        //CONDITION : ID FOR STUDENT PASSED IN PARAMETERS : TRUE
-        if(id>0){
-            //RETURNED CURSOR OBJECT FROM DATABASE RAW QUERY EXECUTION
-            cursor = db.rawQuery(getOne,new String[]{String.valueOf(id)});
-
-            //CONDITION : CURSOR HAS ONE ROW : TRUE
-            if(cursor.getCount()==1){
-
-                //STUDENT / STUDENT LIST OBJECT INITIALIZED
-                student = new Student();
-                studentList = new ArrayList<Student>();
-
-                //PREPARE CURSOR ON RECORD
-                cursor.moveToNext();
-                //EXTRACT FIELDS FROM CURSOR TO OBJECT
-                student.firstName = cursor.getString(1);
-                student.lastName = cursor.getString(2);
-                student.grade = cursor.getDouble(3);
-                student.idNumber = cursor.getString(0);
-                //ADD STUDENT OBJECT TO STUDENT LIST
-                studentList.add(student);
-            }
+        if (cursor.getCount() == 1) {//RETURNED ONE (1) USER
+            cursor.moveToFirst();
+            user = new User();
+            user.setId(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_ID)));
+            user.setFirstName(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_FIRST_NAME)));
+            user.setLastName(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_LAST_NAME)));
+            user.setUsername(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_USERNAME)));
+            user.setAdmin(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_IS_ADMIN)) > 0);
+            user.setRatingPrompted(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED)) > 0);
+            user.setAppRating(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING)));
         }
-        else{//CONDITION : ID FOR STUDENT PASSED IN PARAMETERS : FALSE
-            //RETURNED CURSOR OBJECT FROM DATABASE RAW QUERY EXECUTION
-            cursor = db.rawQuery(getAll,null);
-            //CONDITION : CURSOR CONSIST OF 1 OR MORE RECORDS : TRUE
-            if(cursor.getCount()>0){
-                //PREPARE CURSOR ON RECORD
-                cursor.moveToFirst();
-                //INITIALIZE STUDENT LIST
-                studentList = new ArrayList<Student>();
-                do{//LOOP THROUGH CURSOR RECORDS AND ADD EACH STUDENT TO STUDENT LIST
-                    studentList.add(new Student(cursor.getString(1),cursor.getString(2),cursor.getDouble(3),cursor.getString(0)));
-                }while(cursor.moveToNext());
-            }
+        return user;
+    }
+
+    public User getUser(int id) {
+        User user = null;
+        //INITIALIZE DATABASE OBJECT AS READABLE
+        SQLiteDatabase db = getReadableDatabase();
+        //CREATE DATA BASE SQL QUERY
+        String getUser = "SELECT * FROM " + DatabaseUtil.USERS_TABLE_NAME + " WHERE " + DatabaseUtil.USERS_COLUMN_ID + "=?";
+        //DECLARE CURSOR FOR DATABASE RETREIVAL
+        Cursor cursor = null;
+        //EXECUTE DATABASE QUERY
+        cursor = db.rawQuery(getUser, new String[]{String.valueOf(id)});
+
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            user = new User();
+            user.setId(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_ID)));
+            user.setFirstName(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_FIRST_NAME)));
+            user.setLastName(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_LAST_NAME)));
+            user.setUsername(cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_USERNAME)));
+            user.setAdmin(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_IS_ADMIN)) > 0);
+            user.setRatingPrompted(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED)) > 0);
+            user.setAppRating(cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING)));
         }
-        //CLOSE CURSOR
-        cursor.close();
-        //RETURN STUDENT LIST
-        return studentList;
-    }*/
+        return user;
+    }
+
+    public ArrayList<User> getAllUsers() {
+        ArrayList<User> userList = new ArrayList<User>();
+        //INITIALIZE DATABASE OBJECT AS READABLE
+        SQLiteDatabase db = getReadableDatabase();
+        //CREATE DATA BASE SQL QUERY
+        String getUser = "SELECT * FROM " + DatabaseUtil.USERS_TABLE_NAME;
+        //DECLARE CURSOR FOR DATABASE RETREIVAL
+        Cursor cursor = null;
+        //EXECUTE DATABASE QUERY
+        cursor = db.rawQuery(getUser, new String[]{});
+
+        if (cursor.getCount() > 0) {
+            //PREPARE CURSOR ON RECORD
+            cursor.moveToFirst();
+            //INITIALIZE USER LIST
+            do {//LOOP THROUGH CURSOR RECORDS AND ADD EACH USER TO USER LIST
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_ID));
+                String firstName = cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_FIRST_NAME));
+                String lastName = cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_LAST_NAME));
+                String username = cursor.getString(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_USERNAME));
+                boolean isAdmin = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_IS_ADMIN)) > 0;
+                boolean ratingPrompted = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED)) > 0;
+                int loginCount = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_LOGIN_COUNT));
+                int appRating = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USERS_COLUMN_APP_RATING));
+                userList.add(new User(id, firstName, lastName, username, isAdmin, ratingPrompted, loginCount, appRating));
+            } while (cursor.moveToNext());
+        }
+        return userList;
+    }
+
+    public User addUser(User newUser) {
+        User user = null;
+        //INITIALIZE DATABASE OBJECT AS WRITABLE
+        SQLiteDatabase db = getWritableDatabase();
+
+        //DECLARE AND INITIALIZE CONTENT VALUES; PREPARATIONS FOR INSERTION
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.USERS_COLUMN_FIRST_NAME, newUser.getFirstName());
+        contentValues.put(DatabaseUtil.USERS_COLUMN_LAST_NAME, newUser.getLastName());
+        contentValues.put(DatabaseUtil.USERS_COLUMN_USERNAME, newUser.getUsername());
+        contentValues.put(DatabaseUtil.USERS_COLUMN_PASSWORD, newUser.getPassword());
+        contentValues.put(DatabaseUtil.USERS_COLUMN_IS_ADMIN, false);
+        contentValues.put(DatabaseUtil.USERS_COLUMN_LOGIN_COUNT, 1);
+        contentValues.put(DatabaseUtil.USERS_COLUMN_RATING_PROMPTED, false);
+        contentValues.put(DatabaseUtil.USERS_COLUMN_APP_RATING, 9);
+
+        long idNo = db.insert(DatabaseUtil.USERS_TABLE_NAME, null, contentValues);
+
+        if (idNo > 0) {
+            //ASSIGN USER OBJECT ID NUMBER
+            user = getUser(Integer.valueOf(String.valueOf(idNo)));
+            user = addUserPlaylist(user);
+            //RETURN USER
+            return user;
+        } else
+            return null;//RETURN NULL - NO USER FOUND
+    }
+
+    private User addUserPlaylist(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        user.getPlaylist().setPlaylistName("My Playlist");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_PLAYLIST_NAME, user.getPlaylist().getPlaylistName());
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_SONG_COUNT, 0);
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_USER_ID, user.getId());
+        contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_DURATION, 0);
+        long insertId = db.insert(DatabaseUtil.PLAYLIST_TABLE_NAME, null, contentValues);
+        if (insertId > 0) {
+            user.getPlaylist().setId(Integer.valueOf(String.valueOf(insertId)));
+            return user;
+        } else
+            return user;
+    }
+
+    public User getUserSongs(User user) {
+        ArrayList<User> userList = null;
+        //INITIALIZE DATABASE OBJECT AS READABLE
+        SQLiteDatabase db = getReadableDatabase();
+        //CREATE DATA BASE SQL QUERY
+        String getUserSongs = "SELECT * FROM " + DatabaseUtil.USER_SONGS_TABLE_NAME + " WHERE " + DatabaseUtil.USER_SONGS_COLUMN_USER_ID + "=?";
+        //DECLARE CURSOR FOR DATABASE RETREIVAL
+        Cursor cursor = null;
+        //EXECUTE DATABASE QUERY
+        cursor = db.rawQuery(getUserSongs, new String[]{String.valueOf(user.getId())});
+
+        if (cursor != null && cursor.getCount() > 0) {
+            user.getSongList().clear();
+            //PREPARE CURSOR ON RECORD
+            cursor.moveToFirst();
+            //INITIALIZE USER LIST
+            userList = new ArrayList<User>();
+            do {//LOOP THROUGH CURSOR RECORDS AND ADD EACH SONG TO USER SONG LIST
+                Song song = new Song();
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USER_SONGS_COLUMN_ID));
+                boolean onPlayList = cursor.getInt(cursor.getColumnIndex(DatabaseUtil.USER_SONGS_COLUMN_ON_PLAYLIST)) > 0;
+                song.setId(id);
+                song.setOnPlayList(onPlayList);
+                user.getSongList().add(song);
+            } while (cursor.moveToNext());
+        }
+        return user;
+    }
 
     /*//DBHELPER - ADD A STUDENT IN THE DB TABLE
     public Student addStudent(Student student){

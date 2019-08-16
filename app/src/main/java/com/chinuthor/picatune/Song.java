@@ -5,11 +5,12 @@ package com.chinuthor.picatune;
  */
 public class Song {
 
-    private String id, artist, title, data, displayName, duration;
+    private String artist, title, data, displayName, duration;
     private boolean isPlaying;
     private boolean isOnPlayList;
+    private int id;
 
-    public Song(String id, boolean isOnPlayList) {
+    public Song(int id, boolean isOnPlayList) {
         this.id = id;
         this.isOnPlayList = isOnPlayList;
     }
@@ -25,11 +26,11 @@ public class Song {
         isOnPlayList = onPlayList;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

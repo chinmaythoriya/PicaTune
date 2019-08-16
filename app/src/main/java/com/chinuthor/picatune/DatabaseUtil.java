@@ -45,7 +45,7 @@ public class DatabaseUtil {
             "   " + LOGIN_HISTORY_COLUMN_USER_ID + " INTEGER NOT NULL, \n" +
             "   " + LOGIN_HISTORY_COLUMN_LOGIN_DATE_TIME + " DOUBLE NOT NULL, \n" +
             "   " + LOGIN_HISTORY_COLUMN_LOGOUT_DATE_TIME + " DOUBLE, \n" +
-            "   " + LOGIN_HISTORY_COLUMN_SONGS_PLAYED_COUNT + " INTEGER, \n" +
+            "   " + LOGIN_HISTORY_COLUMN_SONGS_PLAYED_COUNT + " INTEGER \n" +
             ");";
 
 
@@ -62,7 +62,7 @@ public class DatabaseUtil {
             "   " + PLAYLIST_COLUMN_ID + " INTEGER NOT NULL CONSTRAINT playlist_pk PRIMARY KEY AUTOINCREMENT,\n" +
             "   " + PLAYLIST_COLUMN_USER_ID + "INTEGER NOT NULL, \n" +
             "   " + PLAYLIST_COLUMN_PLAYLIST_NAME + " varchar(200) NOT NULL, \n" +
-            "   " + PLAYLIST_COLUMN_SONG_COUNT + " INTEGER NOT NULL, \n" +
+            "   " + PLAYLIST_COLUMN_SONG_COUNT + " INTEGER NOT NULL \n" +
             ");";
 
 
@@ -76,7 +76,7 @@ public class DatabaseUtil {
     public static final String SQL_CREATE_USER_SONGS_TABLE = "CREATE TABLE IF NOT EXISTS " + USER_SONGS_TABLE_NAME + " (\n" +
             "   " + USER_SONGS_COLUMN_ID + " INTEGER NOT NULL CONSTRAINT usersongs_pk PRIMARY KEY AUTOINCREMENT,\n" +
             "   " + USER_SONGS_COLUMN_USER_ID + " INTEGER NOT NULL, \n" +
-            "   " + USER_SONGS_COLUMN_ON_PLAYLIST + " BOOLEAN NOT NULL, \n" +
+            "   " + USER_SONGS_COLUMN_ON_PLAYLIST + " BOOLEAN NOT NULL \n" +
             ");";
 
 

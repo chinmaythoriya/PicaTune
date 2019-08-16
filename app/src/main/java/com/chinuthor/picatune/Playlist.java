@@ -6,6 +6,9 @@ public class Playlist {
     private int songCount;
     private double duration;
 
+    public Playlist() {
+    }
+
     public int getId() {
         return id;
     }

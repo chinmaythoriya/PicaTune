@@ -299,7 +299,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private User addUserPlaylist(User user) {
         SQLiteDatabase db = getWritableDatabase();
-        user.getPlaylist().setPlaylistName("My Playlist");
+
+        user.getPlaylist();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_PLAYLIST_NAME, user.getPlaylist().getPlaylistName());
         contentValues.put(DatabaseUtil.PLAYLIST_COLUMN_SONG_COUNT, 0);

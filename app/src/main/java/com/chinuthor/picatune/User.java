@@ -17,6 +17,8 @@ public class User {
 
 
     public User() {
+        this.songList = new ArrayList<>();
+        this.playlist = new Playlist();
     }
 
     public Playlist getPlaylist() {
@@ -43,6 +45,7 @@ public class User {
         this.loginCount = loginCount;
         this.appRating = appRating;
         this.songList = new ArrayList<>();
+        this.playlist = new Playlist();
     }
 
     public void setSongList(ArrayList<Song> songList) {

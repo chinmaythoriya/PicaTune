@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     // songs-related task you need to do.
 
                 } else {
-                    Toast.makeText(MainActivity.this, "Sorry We Can't Show Songs!!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Sorry We Can't Show Song!!!", Toast.LENGTH_SHORT).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

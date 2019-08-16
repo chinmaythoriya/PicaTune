@@ -7,6 +7,23 @@ public class Song {
 
     private String id, artist, title, data, displayName, duration;
     private boolean isPlaying;
+    private boolean isOnPlayList;
+
+    public Song(String id, boolean isOnPlayList) {
+        this.id = id;
+        this.isOnPlayList = isOnPlayList;
+    }
+
+    public Song() {
+    }
+
+    public boolean isOnPlayList() {
+        return isOnPlayList;
+    }
+
+    public void setOnPlayList(boolean onPlayList) {
+        isOnPlayList = onPlayList;
+    }
 
     public String getId() {
         return id;
